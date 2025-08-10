@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySql ChatBot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <div class="bot-header">
+            <h1>🤖 TableTalk</h1>
+            <small>Converse with Your Data, Discover with Ease</small>
+        </div>
+
+        <div class="chat-container">
+            <div class="ai-chat-box">
+                    <img src="img/aiupimg.png" alt="" id="aiImage"  width="6%">
+                    <div class="ai-chat-area">
+                       Hi there! Your intelligent SQL assistant is online. What can I help you explore in your database?
+                    </div>
+                    
+            </div>
+        </div>
+
+        <div class="prompt-area">
+            <input type="text" id = "prompt" placeholder="Message...">
+            <button id="image"><img src="img/img.svg" alt="">
+                <input type="file" accept="images/*" hidden>
+            </button>
+            <button id="submit"><img src="img/submit.svg" alt=""></button>
+        </div>
+    </div>
+    
+
+    <script src="script.js"></script>
+</body>
+</html>

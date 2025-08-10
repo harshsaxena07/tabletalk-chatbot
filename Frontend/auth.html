@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TableTalk — Login</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>TableTalk</h1>
+    <p class="tag">Converse with your data — sign in to continue</p>
+
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button id="loginBtn">Log in</button>
+    <button id="signupBtn" class="alt">Sign up</button>
+
+    <div style="height:10px"></div>
+    <div class="row">
+      <button id="googleBtn" class="alt" style="flex:1">Sign in with Google</button>
+    </div>
+
+    <div class="small" id="message"></div>
+  </div>
+
+  <!-- modular SDK (latest) -->
+  <script type="module" src="auth.js"></script>
+</body>
+</html>
