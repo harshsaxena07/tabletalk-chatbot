@@ -1,14 +1,12 @@
-https://app.planetscale.com/new
-
-
-psql 'postgresql://neondb_owner:npg_Rcj7HZ5NriKI@ep-morning-field-aee7dy1j-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-
-
-
-psql 'postgresql://neondb_owner:npg_Rcj7HZ5NriKI@ep-morning-field-aee7dy1j-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
-
-
 //future works to do..
 If you want, I can also log every blocked query with the username, timestamp, and query so you can track malicious attempts.
 
+
+
+//const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
+
+//PG_URL='postgresql://neondb_owner:npg_Rcj7HZ5NriKI@ep-morning-field-aee7dy1j-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+
+
 show me all the employee from employees table 
+

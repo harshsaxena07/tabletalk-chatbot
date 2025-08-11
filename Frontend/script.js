@@ -7,7 +7,7 @@ let imageinput = document.querySelector("#image input")
 
 const API_KEY = 'AIzaSyD6LXPu5OhQbNsWBRqKpVKzLxuP8pEf9z8'; 
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-//const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
+
 
 
 let user = {
@@ -74,7 +74,6 @@ async function  genrateResponse(aiChatBox) {
         console.log(data);
 
         // ✅ Added safe check to avoid error if no candidates
-        // ✅ Added safe check to avoid error if no candidates
         let apiResponse = "";
 
         if (
@@ -104,47 +103,82 @@ async function  genrateResponse(aiChatBox) {
         `;
 
 
-        if (/^(CREATE|DROP|ALTER|INSERT|UPDATE|DELETE|USE|SELECT)/i.test(apiResponse)) {
-            try {
-                const sqlResponse = await fetch("http://localhost:5000/execute-sql", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ sql: apiResponse })
-                });
+        if (/^(CREATE|DROP|ALTER|INSERT|UPDATE|DELETE|USE|SELECT|\\dt)/i.test(apiResponse)) {
+    try {
+        const sqlResponse = await fetch("http://localhost:5000/execute-sql", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ sql: apiResponse })
+        });
 
-                const result = await sqlResponse.json();
+        const result = await sqlResponse.json();
 
+        // Special handling for \dt command
+        if (apiResponse.trim().toLowerCase() === '\\dt') {
                 if (result.result && result.result.length > 0) {
-                    const headers = Object.keys(result.result[0]);
-                    const headerRow = headers.map(h => `<th>${h}</th>`).join("");
-                    const bodyRows = result.result.map(row => {
-                        const cells = headers.map(h => `<td>${row[h]}</td>`).join("");
-                        return `<tr>${cells}</tr>`;
-                    }).join("");
-
-                    const table = `
+                    const tablesList = result.result.map(row => `<li>${row.table_name}</li>`).join("");
+                    apiResponse = `
                         <div class="sql-output">
+                            <div class="query-section">
+                                📄 <strong>Command used:</strong><br>
+                                <code>\\dt</code>
+                            </div>
+                            <div class="status-section">
+                                <strong>Status:</strong> ✅ Retrieved table list.
+                            </div>
+                            <div class="table-section">
+                                <ul>${tablesList}</ul>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    apiResponse = `
+                        <div class="sql-output">
+                            <div class="query-section">
+                                📄 <strong>Command used:</strong><br>
+                                <code>\\dt</code>
+                            </div>
+                            <div class="status-section">
+                                <strong>Status:</strong> ⚠️ No tables found.
+                            </div>
+                        </div>
+                    `;
+                }
+
+            } else if (result.result && result.result.length > 0) {
+                // Existing table rendering for normal SELECT queries
+                const headers = Object.keys(result.result[0]);
+                const headerRow = headers.map(h => `<th>${h}</th>`).join("");
+                const bodyRows = result.result.map(row => {
+                    const cells = headers.map(h => `<td>${row[h]}</td>`).join("");
+                    return `<tr>${cells}</tr>`;
+                }).join("");
+
+                const table = `
+                    <div class="sql-output">
                         <div class="query-section">
                             📄 <strong>Query used:</strong><br>
                             <code>${apiResponse}</code>
                         </div>
                         <div class="status-section">
-                            <strong>Status:</strong>  ✅ Query executed successfully.
+                            <strong>Status:</strong> ✅ Query executed successfully.
                         </div>
                         <div class="table-section">
                             <table class="styled-table">
-                            <thead><tr>${headerRow}</tr></thead>
-                            <tbody>${bodyRows}</tbody>
+                                <thead><tr>${headerRow}</tr></thead>
+                                <tbody>${bodyRows}</tbody>
                             </table>
                         </div>
-                        </div>
-                    `;
-                    apiResponse = table;
-                    } else {
-                    apiResponse = `
-                        <div class="sql-output">
+                    </div>
+                `;
+                apiResponse = table;
+
+            } else {
+                // Fallback for other commands
+                apiResponse = `
+                    <div class="sql-output">
                         <div class="query-section">
                             📄 <strong>Query used:</strong><br>
                             <code>${apiResponse}</code>
@@ -152,16 +186,16 @@ async function  genrateResponse(aiChatBox) {
                         <div class="status-section">
                             <strong>Status:</strong> ${result.message || 'Executed successfully.'}
                         </div>
-                        </div>
-                        `;
-                    }
-
-
-            } catch (err) {
-                console.error('SQL Execution Error:', err);
-                apiResponse += `<br><br>🔴 <strong>Server Error:</strong> Failed to execute SQL.`;
+                    </div>
+                `;
             }
+
+        } catch (err) {
+            console.error('SQL Execution Error:', err);
+            apiResponse += `<br><br>🔴 <strong>Server Error:</strong> Failed to execute SQL.`;
         }
+    }
+
 
         console.log(apiResponse);
         text.innerHTML = apiResponse;
